@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag生成器</title>
+    <style>
+        #output {
+            width: 500px;
+            height: 300px;
+            border: 1px solid #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('background.jpg'); /* 背景图片路径 */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .text {
+            font-size: 30px;
+            color: black;
+            font-family: Arial, sans-serif;
+            position: absolute;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tag生成器</h1>
+    <input type="text" id="inputText" placeholder="输入文字">
+    <button onclick="generateImage()">生成Tag</button>
+    <hr/>
+    <br/><p1><b>选择类型</b></p1>
+    <br/><img src="Add_Tag.png" width="30" height="23" />
+    <div id="output"></div>
+
+    <script>
+        function generateImage() {
+            const text = document.getElementById('inputText').value;
+            const output = document.getElementById('output');
+            output.innerHTML = ''; // 清空之前的内容
+            
+            const textElement = document.createElement('div');
+            textElement.className = 'text';
+            textElement.textContent = text;
+            output.appendChild(textElement);
+        }
+    </script>
+</body>
+</html>
