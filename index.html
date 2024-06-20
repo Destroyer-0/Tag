@@ -1,52 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tag生成器</title>
     <style>
         #output {
-            width: 500px;
-            height: 300px;
-            border: 1px solid #000;
+            height: 23px;
+            /* border: 1px solid #000; */
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-image: url('background.jpg'); /* 背景图片路径 */
-            background-size: cover;
-            background-position: center;
+            background-image: url('background.png');
+            background-repeat: repeat-x;
+            /* 横向重复 */
+            background-size: auto 100%;
+            /* 垂直方向充满，高度不变 */
+            overflow: hidden;
+            /* 隐藏溢出的文字 */
+            padding: 0 10px;
+            /* 两边内边距，防止文字紧贴边界 */
         }
 
         .text {
-            font-size: 30px;
+            font-size: 12px;
             color: black;
-            font-family: Arial, sans-serif;
-            position: absolute;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            position: relative;
             white-space: nowrap;
+            text-overflow: ellipsis;
+            /* 超出部分显示省略号 */
+            overflow: hidden;
+            /* 隐藏溢出的文字 */
+            max-width: 100%;
+            /* 确保文本不会超出容器 */
         }
     </style>
 </head>
+
 <body>
     <h1>Tag生成器</h1>
     <input type="text" id="inputText" placeholder="输入文字">
     <button onclick="generateImage()">生成Tag</button>
-    <hr/>
-    <br/><p1><b>选择类型</b></p1>
-    <br/><img src="Add_Tag.png" width="30" height="23" />
+    <hr />
+    <!-- <br/><p1><b>选择类型</b></p1>
+    <br/><img src="Add_Tag.png" width="30" height="23" /> -->
     <div id="output"></div>
 
     <script>
-        function generateImage() {
+        function generateImage()
+        {
             const text = document.getElementById('inputText').value;
             const output = document.getElementById('output');
             output.innerHTML = ''; // 清空之前的内容
-            
+
             const textElement = document.createElement('div');
             textElement.className = 'text';
             textElement.textContent = text;
             output.appendChild(textElement);
+
+            // 调整容器的宽度以适应文本
+            adjustContainerWidth(output, textElement);
+        }
+        function adjustContainerWidth(container, textElement)
+        {
+            const textWidth = getTextWidth(textElement);
+            container.style.width = (textWidth + 20) + 'px'; // 根据文本宽度调整容器宽度，增加20px内边距
+            container.style.backgroundSize = `${textWidth}px 100%`; // 背景图横向拉伸
+        }
+
+        function getTextWidth(element)
+        {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            context.font = window.getComputedStyle(element).font;
+            return context.measureText(element.textContent).width;
         }
     </script>
 </body>
+
 </html>
