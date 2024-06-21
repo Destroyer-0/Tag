@@ -59,8 +59,13 @@
 	</div>
 	<div class="part end-part"></div>
 </div>
+<br/>
+<button onclick="saveImage()">保存图片</button>
 
 <script>
+    let generatedImage = null;
+
+
     window.addEventListener("load", () => {
         const middlePart = document.querySelector('.middle-part');
         middlePart.style.width = '8px'; // 设置初始宽度为8px
@@ -74,6 +79,9 @@
         const textWidth = getTextWidth(textElement);
         const middlePart = document.querySelector('.middle-part');
         middlePart.style.width = (textWidth > 0 ? textWidth + 20 : 8) + 'px';// 根据文本宽度调整中间部分宽度，增加20px内边距
+
+        // 将生成的图片保存为全局变量
+        generatedImage = textWidth > 0 ? generateImageWithText(text) : null;
     }
 
     function getTextWidth(element) {
@@ -82,6 +90,63 @@
         context.font = window.getComputedStyle(element).font;
         return context.measureText(element.textContent).width;
     }
+
+    function generateImageWithText(text) {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        const textElement = document.getElementById('text');
+
+        // 设置 canvas 尺寸
+        canvas.width = textElement.offsetWidth;
+        canvas.height = textElement.offsetHeight;
+
+        // 绘制背景和文本
+        context.fillStyle = 'white';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.font = window.getComputedStyle(textElement).font;
+        context.fillStyle = 'black';
+        context.fillText(text, 0, canvas.height / 2);
+
+        // 将 canvas 转换为图片
+        return canvas.toDataURL("image/png");
+    }
+
+    function saveImage() {
+        if (!generatedImage) {
+            alert("请先生成图片！");
+            return;
+        }
+
+        // 创建一个画布
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        // 设置画布尺寸
+        canvas.width = 100; // 设置为需要的宽度
+        canvas.height = 50; // 设置为需要的高度
+
+        // 绘制背景和文本
+        const imageObj = new Image();
+        imageObj.onload = function() {
+            context.drawImage(imageObj, 0, 0); // 将背景图片绘制到画布上
+            const textImage = new Image();
+            textImage.onload = function() {
+                context.drawImage(textImage, 0, 0); // 将带有文字的图片绘制到画布上
+                // 将画布内容作为图片保存
+                const dataUrl = canvas.toDataURL("image/png");
+                // 创建一个下载链接并触发点击事件
+                const a = document.createElement('a');
+                a.href = dataUrl;
+                a.download = 'tag.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            };
+            textImage.src = generatedImage;
+        };
+        imageObj.src = 'background.png'; // 背景图片路径
+    }
+
 </script>
 </body>
 </html>
