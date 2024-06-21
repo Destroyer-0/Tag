@@ -1,84 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag生成器</title>
-    <style>
-        #output {
-            height: 23px;
-            /* border: 1px solid #000; */
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tag生成器</title>
+	<style>
+        #output-container {
+            display: flex;
+            align-items: center;
+            justify-content: left;
             position: relative;
+        }
+
+        .part {
+            height: 23px;
+        }
+
+        .start-part {
+            width: 19px; /* 前X个像素 */
+            background: url('Add_Tag_L.png') no-repeat;
+        }
+
+        .middle-part {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-image: url('background.png');
-            background-repeat: repeat-x;
-            /* 横向重复 */
-            background-size: auto 100%;
-            /* 垂直方向充满，高度不变 */
-            overflow: hidden;
-            /* 隐藏溢出的文字 */
-            padding: 0 10px;
-            /* 两边内边距，防止文字紧贴边界 */
+            background: url('Add_Tag_M.png') repeat-x;
+            width: 8px; /* 设置初始宽度 */
+            min-width: 8px; /* 设置最小宽度为8px */
+        }
+
+        .end-part {
+            width: 3px; /* 后Y个像素 */
+            background: url('Add_Tag_R.png') no-repeat;
         }
 
         .text {
             font-size: 12px;
             color: black;
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-            position: relative;
             white-space: nowrap;
-            text-overflow: ellipsis;
-            /* 超出部分显示省略号 */
-            overflow: hidden;
-            /* 隐藏溢出的文字 */
-            max-width: 100%;
-            /* 确保文本不会超出容器 */
+            text-overflow: ellipsis; /* 超出部分显示省略号 */
+            overflow: hidden; /* 隐藏溢出的文字 */
+            max-width: 100%; /* 确保文本不会超出容器 */
+            position: relative; /* 相对定位，使文本覆盖在背景图上 */
         }
-    </style>
+	</style>
 </head>
-
 <body>
-    <h1>Tag生成器</h1>
-    <input type="text" id="inputText" placeholder="输入文字">
-    <button onclick="generateImage()">生成Tag</button>
-    <hr />
-    <!-- <br/><p1><b>选择类型</b></p1>
-    <br/><img src="Add_Tag.png" width="30" height="23" /> -->
-    <div id="output"></div>
+<h1>Tag生成器</h1>
+<input type="text" id="inputText" placeholder="输入文字">
+<button onclick="generateImage()">生成Tag</button>
+<hr/>
+<div id="output-container">
+	<div class="part start-part"></div>
+	<div class="part middle-part">
+		<div class="text" id="text"></div>
+	</div>
+	<div class="part end-part"></div>
+</div>
 
-    <script>
-        function generateImage()
-        {
-            const text = document.getElementById('inputText').value;
-            const output = document.getElementById('output');
-            output.innerHTML = ''; // 清空之前的内容
+<script>
+    window.addEventListener("load", () => {
+        const middlePart = document.querySelector('.middle-part');
+        middlePart.style.width = '8px'; // 设置初始宽度为8px
+    });
+    function generateImage() {
+        const text = document.getElementById('inputText').value;
+        const textElement = document.getElementById('text');
+        textElement.textContent = text;
 
-            const textElement = document.createElement('div');
-            textElement.className = 'text';
-            textElement.textContent = text;
-            output.appendChild(textElement);
+        // 调整中间部分的宽度以适应文本
+        const textWidth = getTextWidth(textElement);
+        const middlePart = document.querySelector('.middle-part');
+        middlePart.style.width = (textWidth > 0 ? textWidth + 20 : 8) + 'px';// 根据文本宽度调整中间部分宽度，增加20px内边距
+    }
 
-            // 调整容器的宽度以适应文本
-            adjustContainerWidth(output, textElement);
-        }
-        function adjustContainerWidth(container, textElement)
-        {
-            const textWidth = getTextWidth(textElement);
-            container.style.width = (textWidth + 20) + 'px'; // 根据文本宽度调整容器宽度，增加20px内边距
-            container.style.backgroundSize = `${textWidth}px 100%`; // 背景图横向拉伸
-        }
-
-        function getTextWidth(element)
-        {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            context.font = window.getComputedStyle(element).font;
-            return context.measureText(element.textContent).width;
-        }
-    </script>
+    function getTextWidth(element) {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        context.font = window.getComputedStyle(element).font;
+        return context.measureText(element.textContent).width;
+    }
+</script>
 </body>
-
 </html>
